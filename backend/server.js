@@ -4,54 +4,52 @@ import dotenv from "dotenv";
 import connectDB from "./db/db.js";
 import dns from "node:dns";
 import cookieParser from "cookie-parser";
-import crypto from "crypto"; // Native Node module to verify Paystack Webhook signatures
+import crypto from "crypto";
 import { createDecartClient, models } from "@decartai/sdk";
+import { createServer } from "http";               // NEW
+import { Server } from "socket.io";                 // NEW
+import { v4 as uuidv4 } from "uuid";                // NEW
 
-// Import your user model and protection middleware
 import User from "./models/user.js";
 import protect from "./middleware/authMiddleware.js";
 import authRoutes from "./routes/authRoutes.js";
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 dotenv.config();
-
-// Connect database
 connectDB();
 
 const app = express();
 
-// --- Paystack Configuration Elements ---
+// ---------- HTTP & Socket.IO setup ----------
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:8080",
+    methods: ["GET", "POST"]
+  }
+});
+
+// ---------- Paystack Configuration ----------
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY || "sk_test_7d79cef5b6dcf1c74ffdf06fe88ee3241d1bdd8c";
 const paystackHeaders = {
   Authorization: `Bearer ${PAYSTACK_SECRET}`,
   'Content-Type': 'application/json',
 };
-
-// Convert standard currency values safely to Kobo minor units
 const toKobo = (amount) => Math.round(parseFloat(amount) * 100);
 
-// --- Middleware Pipeline ---
-app.use(cors({ origin: "https://faceverse-ai-alpha.vercel.app", credentials: true }));
-
-// CRITICAL: We need the raw body for the webhook signature verification,
-// so we configure express.json() to save it on req.rawBody
+// ---------- Middleware Pipeline ----------
+app.use(cors({ origin: "http://localhost:8080", credentials: true }));
 app.use(express.json({
-  verify: (req, res, buf) => {
-    req.rawBody = buf;
-  }
+  verify: (req, res, buf) => { req.rawBody = buf; }
 }));
 app.use(cookieParser());
 
-// --- Base Status Route ---
-app.get("/", (req, res) => {
-  res.send("API running with MongoDB 🚀");
-});
+// ---------- Routes ----------
+app.get("/", (req, res) => res.send("API running with MongoDB 🚀"));
 
-// --- Authentication & Account Routing Layouts ---
 app.use("/api/auth", authRoutes);
 app.use("/api/lucy", authRoutes);
 
-// --- Decart AI Engine Integration Route ---
 app.post("/session", async (req, res) => {
   try {
     if (!process.env.DECART_API_KEY) {
@@ -70,135 +68,128 @@ app.post("/session", async (req, res) => {
   }
 });
 
-// --- PAYSTACK ACCEPT PAYMENT ENDPOINTS ---
+// --- PAYSTACK ENDPOINTS (unchanged) ---
+app.post("/api/paystack/initialize", protect, async (req, res) => {
+  try {
+    const { amountPaid, creditsAdded } = req.body;
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ success: false, message: "User context missing" });
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-/**
- * 1. INITIALIZE TRANSACTION
- * Frontend hits this when a user clicks "Buy Credits".
- * Request Body: { amountPaid: 5000, creditsAdded: 500 }
- */
- // --- Paystack Checkout Route with Detailed Logging ---
- app.post("/api/paystack/initialize", protect, async (req, res) => {
-   console.log("--------------------------------------------------");
-   console.log("📬 [Paystack Init] Incoming request received.");
-   console.log("📦 Request Body:", req.body);
-   console.log("👤 Authenticated User ID from Middleware:", req.user?.id);
+    const amountInKobo = toKobo(amountPaid);
+    const body = {
+      email: user.email,
+      amount: amountInKobo,
+      callback_url: "http://localhost:3000/Success.html",
+      metadata: {
+        userId: user._id.toString(),
+        creditsToAdd: Number(creditsAdded),
+        amountPaidOriginal: Number(amountPaid)
+      }
+    };
 
-   try {
-     const { amountPaid, creditsAdded } = req.body;
-     const userId = req.user?.id;
+    const resp = await fetch("https://api.paystack.co/transaction/initialize", {
+      method: "POST",
+      headers: paystackHeaders,
+      body: JSON.stringify(body),
+    });
+    const data = await resp.json();
+    if (!data.status) return res.status(400).json({ success: false, message: data.message });
 
-     if (!userId) {
-       console.error("❌ [Auth Error] req.user.id is undefined. Check auth protection middleware.");
-       return res.status(401).json({ success: false, message: "User context missing from auth protection middleware." });
-     }
+    return res.json({
+      success: true,
+      authorization_url: data.data.authorization_url,
+      reference: data.data.reference
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+});
 
-     const user = await User.findById(userId);
-     if (!user) {
-       console.error(`❌ [Database Error] User with ID ${userId} not found.`);
-       return res.status(404).json({ success: false, message: "User not found" });
-     }
-     console.log(`✅ [Database Success] Found user: ${user.email}`);
-
-     const amountInKobo = toKobo(amountPaid);
-     console.log(`🪙 Computed amount in minor units (Kobo): ${amountInKobo}`);
-
-     const body = {
-       email: user.email,
-       amount: amountInKobo,
-       callback_url: "http://localhost:3000/Success.html",
-       metadata: {
-         userId: user._id.toString(),
-         creditsToAdd: Number(creditsAdded),
-         amountPaidOriginal: Number(amountPaid)
-       }
-     };
-
-     console.log("🚀 Sending Request Payload to Paystack API...");
-     console.log("🔑 Using Secret Key Prefix:", PAYSTACK_SECRET ? PAYSTACK_SECRET.substring(0, 12) + "..." : "UNDEFINED");
-
-     const resp = await fetch("https://api.paystack.co/transaction/initialize", {
-       method: "POST",
-       headers: paystackHeaders,
-       body: JSON.stringify(body),
-     });
-
-     console.log(`📡 Paystack Response Status Code: ${resp.status} ${resp.statusText}`);
-     const data = await resp.json();
-     console.log("📥 Paystack Response Data Payload:", data);
-
-     if (!data.status) {
-       console.error("❌ [Paystack API Rejection]:", data.message);
-       return res.status(400).json({ success: false, message: data.message });
-     }
-
-     console.log("🎯 [Success] Authorization URL successfully fetched. Passing back to client.");
-     return res.status(200).json({
-       success: true,
-       authorization_url: data.data.authorization_url,
-       reference: data.data.reference
-     });
-
-   } catch (err) {
-     console.error("💥 [Fatal Server Exception Context]:", err);
-     return res.status(500).json({ success: false, message: err.message });
-   }
- });
-/**
- * 2. SECURE PAYSTACK WEBHOOK
- * Paystack calls this asynchronously when the user completes payment.
- * Do NOT use 'protect' middleware here; it's a direct server-to-server call.
- */
 app.post("/api/paystack/webhook", async (req, res) => {
   try {
-    // Validate that the request actually came from Paystack using HMAC SHA512
-    const hash = crypto
-      .createHmac("sha512", PAYSTACK_SECRET)
-      .update(req.rawBody)
-      .digest("hex");
-
-    if (hash !== req.headers["x-paystack-signature"]) {
-      return res.status(401).json({ message: "Invalid transaction signature" });
-    }
+    const hash = crypto.createHmac("sha512", PAYSTACK_SECRET).update(req.rawBody).digest("hex");
+    if (hash !== req.headers["x-paystack-signature"]) return res.status(401).json({ message: "Invalid signature" });
 
     const event = req.body;
-
-    // We only care about successful charges
     if (event.event === "charge.success") {
       const paymentData = event.data;
       const metadata = paymentData.metadata;
-
       if (metadata && metadata.userId) {
-        // Atomic transaction: Add credits and append details directly into topupHistory array
-        await User.findByIdAndUpdate(
-          metadata.userId,
-          {
-            $inc: { credits: metadata.creditsToAdd },
-            $push: {
-              topupHistory: {
-                amountPaid: metadata.amountPaidOriginal,
-                creditsAdded: metadata.creditsToAdd,
-                paymentProvider: "paystack",
-                providerReference: paymentData.reference,
-                status: "completed",
-              },
+        await User.findByIdAndUpdate(metadata.userId, {
+          $inc: { credits: metadata.creditsToAdd },
+          $push: {
+            topupHistory: {
+              amountPaid: metadata.amountPaidOriginal,
+              creditsAdded: metadata.creditsToAdd,
+              paymentProvider: "paystack",
+              providerReference: paymentData.reference,
+              status: "completed",
             },
-          }
-        );
-        console.log(`Successfully credited ${metadata.creditsToAdd} credits to user: ${metadata.userId}`);
+          },
+        });
+        console.log(`Credited ${metadata.creditsToAdd} credits to user ${metadata.userId}`);
       }
     }
-
-    // Always tell Paystack you received the event successfully
-    return res.status(200).send("Event processed");
+    return res.send("Event processed");
   } catch (err) {
-    console.error("Webhook processing fault:", err.message);
     return res.status(500).json({ error: err.message });
   }
 });
 
-// --- Server Allocation Init ---
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// ========== NEW: Video Call Room Management ==========
+const rooms = new Map();   // roomId → Set<socket.id>
+
+io.on("connection", (socket) => {
+  console.log("Socket connected:", socket.id);
+
+  socket.on("create-room", () => {
+    const roomId = uuidv4();
+    rooms.set(roomId, new Set([socket.id]));
+    socket.join(roomId);
+    socket.emit("room-created", roomId);
+  });
+
+  socket.on("join-room", (roomId) => {
+    if (!rooms.has(roomId)) {
+      socket.emit("error", "Room does not exist");
+      return;
+    }
+    const room = rooms.get(roomId);
+    room.add(socket.id);
+    socket.join(roomId);
+    socket.to(roomId).emit("user-joined", socket.id);
+    socket.emit("room-joined", roomId);
+  });
+
+  socket.on("offer", ({ target, sdp }) => {
+    io.to(target).emit("offer", { sender: socket.id, sdp });
+  });
+
+  socket.on("answer", ({ target, sdp }) => {
+    io.to(target).emit("answer", { sender: socket.id, sdp });
+  });
+
+  socket.on("ice-candidate", ({ target, candidate }) => {
+    io.to(target).emit("ice-candidate", { sender: socket.id, candidate });
+  });
+
+  socket.on("disconnect", () => {
+    for (const [roomId, participants] of rooms.entries()) {
+      if (participants.has(socket.id)) {
+        participants.delete(socket.id);
+        if (participants.size === 0) {
+          rooms.delete(roomId);
+        } else {
+          io.to(roomId).emit("user-left", socket.id);
+        }
+        break;
+      }
+    }
+  });
 });
+
+// ---------- Start server ----------
+const PORT = process.env.PORT || 5000;
+httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));

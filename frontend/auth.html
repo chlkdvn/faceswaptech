@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In & Register - FaceVerseAi</title>
+    <title>Sign In & Register - Kola Encrypted Video Calls</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        darkBg: '#05050f',
-                        cardBg: '#0d1024',
-                        brandPurple: '#9333ea',
-                        brandLightPurple: '#a855f7',
-                        inputBg: '#f0f4f8'
+                        void: '#060913',
+                        surface: '#0d1527',
+                        edge: '#1b2a4a',
+                        inner: '#081020',
+                        neon: '#3b82f6',
+                        glow: '#1d4ed8',
+                        accent: '#60a5fa',
+                        inputBg: '#0b1329'
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -27,76 +30,81 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #05050f;
+            background-color: #060913;
         }
         .text-glow {
-            text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
         }
         .button-glow {
-            box-shadow: 0 0 20px rgba(147, 51, 234, 0.4);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
         }
     </style>
 </head>
-<body class="text-gray-200 antialiased min-h-screen flex overflow-x-hidden selection:bg-purple-500 selection:text-white">
+<body class="text-gray-200 antialiased min-h-screen flex overflow-x-hidden selection:bg-blue-600 selection:text-white">
 
     <div class="flex flex-1 flex-col lg:flex-row w-full relative">
 
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-brandPurple/5 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none"></div>
 
-        <div class="flex-1 flex flex-col justify-between p-8 lg:p-20 relative z-10 border-b lg:border-b-0 lg:border-r border-slate-800/50 bg-[#05050f]/80 backdrop-blur-sm">
+        <div class="flex-1 flex flex-col justify-between p-8 lg:p-20 relative z-10 border-b lg:border-b-0 lg:border-r border-edge bg-[#060913]/80 backdrop-blur-sm">
 
             <div class="mt-8 lg:mt-16 max-w-md">
-                <a href="/" class="text-3xl font-extrabold tracking-tight text-white inline-block mb-12 hover:opacity-90 transition-opacity">
-                    FaceVerseAi
+                <a href="/" class="flex items-center gap-3 text-3xl font-extrabold tracking-tight text-white inline-block mb-12 hover:opacity-90 transition-opacity">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-700 flex items-center justify-center shadow-[0_0_18px_rgba(59,130,246,0.6)]">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <span>Kola<span class="text-blue-400">.</span></span>
                 </a>
 
                 <h1 class="text-4xl lg:text-[2.75rem] font-bold text-white leading-[1.2] tracking-tight mb-2">
-                    Real-time identity for
-                    <span class="block text-brandLightPurple text-glow mt-1">streams & calls</span>
+                    Real-time encrypted calls for
+                    <span class="block text-accent text-glow mt-1">private video meetings</span>
                 </h1>
 
                 <ul class="space-y-6 mt-12">
                     <li class="flex items-start space-x-4">
-                        <span class="w-1.5 h-1.5 rounded-full bg-brandLightPurple mt-2.5 shrink-0 shadow-[0_0_8px_rgba(168,85,247,0.8)]"></span>
+                        <span class="w-2 h-2 rounded-full bg-blue-400 mt-2 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span>
                         <p class="text-gray-300 text-[15px] leading-relaxed font-medium">
-                            Secure sign-in powered by your identity backend <br class="hidden sm:block"><span class="text-gray-400 font-normal">— your profile syncs automatically.</span>
+                            Secure sign-in powered by your identity backend <br class="hidden sm:block"><span class="text-gray-400 font-normal">— your credentials sync automatically.</span>
                         </p>
                     </li>
                     <li class="flex items-start space-x-4">
-                        <span class="w-1.5 h-1.5 rounded-full bg-brandLightPurple mt-2.5 shrink-0 shadow-[0_0_8px_rgba(168,85,247,0.8)]"></span>
+                        <span class="w-2 h-2 rounded-full bg-blue-400 mt-2 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span>
                         <p class="text-gray-400 text-[15px] leading-relaxed">
-                            Buy credits, run sessions, and manage characters from your dashboard.
+                            Generate encrypted call links, host sessions, and join rooms directly from your dashboard.
                         </p>
                     </li>
                     <li class="flex items-start space-x-4">
-                        <span class="w-1.5 h-1.5 rounded-full bg-brandLightPurple mt-2.5 shrink-0 shadow-[0_0_8px_rgba(168,85,247,0.8)]"></span>
+                        <span class="w-2 h-2 rounded-full bg-blue-400 mt-2 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span>
                         <p class="text-gray-400 text-[15px] leading-relaxed">
-                            OBS-ready output when you are ready to go live.
+                            High-definition peer-to-peer WebRTC stream connection with zero middleman logging.
                         </p>
                     </li>
                 </ul>
             </div>
 
             <div class="mt-16 lg:mt-0 max-w-xs">
-                <p class="text-[11px] text-gray-500 leading-relaxed font-medium">
-                    New here? Create an account, then view your personalized configuration panel instantly.
+                <p class="text-[11px] text-blue-300/60 leading-relaxed font-medium">
+                    New here? Create an account, then view your personalized Kola video call panel instantly.
                 </p>
             </div>
         </div>
 
-        <div class="flex-1 flex items-center justify-center p-8 lg:p-20 relative z-10 bg-[#070815]">
+        <div class="flex-1 flex items-center justify-center p-8 lg:p-20 relative z-10 bg-[#081020]">
 
-            <div class="w-full max-w-[420px] bg-[#0d1024] border border-slate-800/80 rounded-2xl p-8 shadow-2xl relative">
+            <div class="w-full max-w-[420px] bg-surface border border-edge rounded-2xl p-8 shadow-2xl relative">
 
                 <div class="mb-6">
                     <h2 id="auth-title" class="text-2xl font-bold text-white mb-2 tracking-tight">Welcome back</h2>
-                    <p id="auth-desc" class="text-[13px] text-gray-400">Sign in to manage credits, sessions, and uploads.</p>
+                    <p id="auth-desc" class="text-[13px] text-blue-200/60">Sign in to manage room links, calls, and sessions.</p>
                 </div>
 
                 <div id="error-banner" class="hidden p-3 mb-4 text-xs font-medium bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl"></div>
 
-                <div class="flex items-center p-1 bg-[#090b16] rounded-xl border border-slate-800/50 mb-8">
-                    <button id="btn-login" type="button" onclick="toggleAuth('login')" class="flex-1 py-2 text-[13px] font-semibold text-white bg-[#201d4a] rounded-lg shadow-sm transition-all duration-200">
+                <div class="flex items-center p-1 bg-void rounded-xl border border-edge mb-8">
+                    <button id="btn-login" type="button" onclick="toggleAuth('login')" class="flex-1 py-2 text-[13px] font-semibold text-white bg-blue-600/30 rounded-lg shadow-sm transition-all duration-200">
                         Sign in
                     </button>
                     <button id="btn-register" type="button" onclick="toggleAuth('register')" class="flex-1 py-2 text-[13px] font-medium text-gray-400 hover:text-white rounded-lg transition-all duration-200">
@@ -107,33 +115,33 @@
                 <form id="auth-form" class="space-y-5">
 
                     <div class="space-y-2">
-                        <label for="email" class="text-[10px] font-bold text-gray-400 tracking-wider uppercase block">
+                        <label for="email" class="text-[10px] font-bold text-blue-300/70 tracking-wider uppercase block">
                             Email
                         </label>
                         <input
                             type="email"
                             id="email"
                             placeholder="name@example.com"
-                            class="w-full px-4 py-3 bg-inputBg border-none rounded-xl text-gray-900 text-[14px] font-medium focus:ring-2 focus:ring-brandPurple outline-none transition-all"
+                            class="w-full px-4 py-3 bg-void border border-edge rounded-xl text-white text-[14px] font-medium focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-gray-600"
                             required
                         >
                     </div>
 
                     <div class="space-y-2">
-                        <label for="password" class="text-[10px] font-bold text-gray-400 tracking-wider uppercase block">
+                        <label for="password" class="text-[10px] font-bold text-blue-300/70 tracking-wider uppercase block">
                             Password
                         </label>
                         <input
                             type="password"
                             id="password"
                             placeholder="••••••••••••"
-                            class="w-full px-4 py-3 bg-inputBg border-none rounded-xl text-gray-900 text-[14px] font-medium focus:ring-2 focus:ring-brandPurple outline-none transition-all tracking-widest"
+                            class="w-full px-4 py-3 bg-void border border-edge rounded-xl text-white text-[14px] font-medium focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all tracking-widest placeholder:text-gray-600"
                             required
                         >
                     </div>
 
                     <div id="forgot-password-wrap" class="flex justify-end pt-1">
-                        <a href="#" class="text-[12px] font-semibold text-brandLightPurple hover:text-purple-300 transition-colors">
+                        <a href="#" class="text-[12px] font-semibold text-accent hover:text-blue-300 transition-colors">
                             Forgot password?
                         </a>
                     </div>
@@ -142,7 +150,7 @@
                         <button
                             id="auth-submit-btn"
                             type="submit"
-                            class="w-full bg-brandLightPurple hover:bg-brandPurple text-white font-semibold text-[14px] py-3.5 rounded-xl transition-all duration-200 button-glow active:scale-[0.98]"
+                            class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-[14px] py-3.5 rounded-xl transition-all duration-200 button-glow active:scale-[0.98]"
                         >
                             Sign in
                         </button>
@@ -180,20 +188,20 @@
 
             if (mode === 'register') {
                 title.textContent = 'Create an account';
-                desc.textContent = 'Register to manage credits, sessions, and uploads.';
+                desc.textContent = 'Register to host and join Kola encrypted video calls.';
                 submitBtn.textContent = 'Register';
                 forgotPassword.classList.add('hidden');
 
                 loginBtn.className = "flex-1 py-2 text-[13px] font-medium text-gray-400 hover:text-white rounded-lg transition-all duration-200";
-                registerBtn.className = "flex-1 py-2 text-[13px] font-semibold text-white bg-[#201d4a] rounded-lg shadow-sm transition-all duration-200";
+                registerBtn.className = "flex-1 py-2 text-[13px] font-semibold text-white bg-blue-600/30 rounded-lg shadow-sm transition-all duration-200";
             } else {
                 title.textContent = 'Welcome back';
-                desc.textContent = 'Sign in to manage credits, sessions, and uploads.';
+                desc.textContent = 'Sign in to manage room links, calls, and sessions.';
                 submitBtn.textContent = 'Sign in';
                 forgotPassword.classList.remove('hidden');
 
                 registerBtn.className = "flex-1 py-2 text-[13px] font-medium text-gray-400 hover:text-white rounded-lg transition-all duration-200";
-                loginBtn.className = "flex-1 py-2 text-[13px] font-semibold text-white bg-[#201d4a] rounded-lg shadow-sm transition-all duration-200";
+                loginBtn.className = "flex-1 py-2 text-[13px] font-semibold text-white bg-blue-600/30 rounded-lg shadow-sm transition-all duration-200";
             }
         }
 
@@ -208,8 +216,8 @@
 
             // Set endpoint depending on dynamic runtime mode state
             const targetUrl = currentMode === 'register'
-                ? 'https://faceverse-ai.onrender.com/api/auth/register'
-                : 'https://faceverse-ai.onrender.com/api/auth/login';
+                ? 'http://localhost:5000/api/auth/register'
+                : 'http://localhost:5000/api/auth/login';
 
             try {
                 errorBanner.classList.add('hidden');
@@ -222,22 +230,25 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ email, password }),
-                    credentials: 'include' // Attaches session/auth tokens natively
+                    credentials: 'include'
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                  // 🚩 ADDED: Lock the token into localStorage cleanly
+                    // Lock the token into localStorage cleanly
                     if (data.token) {
                         localStorage.setItem('token', data.token);
                         console.log("🔒 Token successfully cached in localStorage.");
                     }
 
-                    // Optional: cache user info as well to minimize flash layouts
-                    localStorage.setItem('userEmail', data.email);
+                    // Cache user info as well
+                    if (data.email) {
+                        localStorage.setItem('userEmail', data.email);
+                    }
 
-                    window.location.href = '/Home.html';
+                    // 🎯 REDIRECT DIRECTLY TO call.html
+                    window.location.href = '/call.html';
                 } else {
                     // Show validation or error payload from server
                     errorBanner.textContent = data.message || `An error occurred during ${currentMode}.`;
@@ -245,7 +256,7 @@
                 }
             } catch (err) {
                 console.error("Network interface connection failure:", err);
-                errorBanner.textContent = "Could not connect to authentication services. Please verify your local system backend configuration.";
+                errorBanner.textContent = "Could not connect to authentication services. Please verify your local system backend configuration at http://localhost:5000.";
                 errorBanner.classList.remove('hidden');
             } finally {
                 submitBtn.disabled = false;

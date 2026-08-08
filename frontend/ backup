@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FaceVerseAi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#05050f',
+                        cardBg: '#0d1024',
+                        innerBg: '#070815',
+                        brandPurple: '#9333ea',
+                        brandLightPurple: '#a855f7',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #05050f;
+        }
+        .button-glow {
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #05050f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "@decartai/sdk": "https://esm.sh/@decartai/sdk"
+        }
+      }
+    </script>
+</head>
+<body class="text-gray-300 antialiased min-h-screen flex selection:bg-purple-500 selection:text-white">
+
+    <aside class="w-64 bg-[#05050f] border-r border-slate-900 p-5 flex flex-col justify-between shrink-0 hidden md:flex z-20">
+        <div class="space-y-6">
+            <a href="/" class="flex items-center space-x-3 px-2">
+                <div class="relative w-7 h-7 flex items-center justify-center rounded-full border border-dashed border-brandLightPurple/60">
+                    <div class="w-4 h-4 rounded-full bg-gradient-to-tr from-blue-500 to-brandLightPurple flex items-center justify-center">
+                        <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                    </div>
+                </div>
+                <span class="text-xl font-extrabold tracking-tight text-white">FaceVerseAi</span>
+            </a>
+
+            <nav class="space-y-1">
+                <a href="/Home.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-purple-950/40 text-purple-300 font-medium text-[14px] transition-all border border-purple-900/30">
+                    <span>Dashboard</span>
+                </a>
+                <a href="/turtor.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-slate-900/50 font-medium text-[14px] transition-all">
+                    <span>Tutorial</span>
+                </a>
+                <a href="/Avatars.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-slate-900/50 font-medium text-[14px] transition-all">
+                    <span>Avatars</span>
+                </a>
+                <a href="/Backgrounds.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-slate-900/50 font-medium text-[14px] transition-all">
+                    <span>Backgrounds</span>
+                </a>
+                <a href="/credits.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-slate-900/50 font-medium text-[14px] transition-all">
+                    <span>Credits</span>
+                </a>
+                <a href="/Transactions.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-slate-900/50 font-medium text-[14px] transition-all">
+                    <span>Transactions</span>
+                </a>
+                <a href="/Settings.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-slate-900/50 font-medium text-[14px] transition-all">
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="space-y-3 pt-4 border-t border-slate-900">
+            <div class="bg-[#0d1024] border border-slate-800/60 rounded-xl p-3.5 space-y-2">
+                <div class="text-[12px] font-bold text-white">Refer & Earn</div>
+                <div class="text-[11px] text-gray-400 leading-tight">Invite friends and get bonus credits.</div>
+                <button class="w-full py-1.5 bg-gradient-to-r from-brandPurple to-brandLightPurple hover:opacity-95 transition-all text-[11px] font-bold text-white rounded-lg button-glow">
+                    Buy Credits
+                </button>
+            </div>
+
+            <div class="bg-[#0d1024] border border-slate-800/60 rounded-xl p-3.5 space-y-2">
+                <div class="text-[12px] font-bold text-white">Community</div>
+                <div class="text-[11px] text-gray-400 leading-tight">Join our WhatsApp group for updates and support.</div>
+                <button class="w-full py-1.5 bg-gradient-to-r from-brandPurple to-brandLightPurple hover:opacity-95 transition-all text-[11px] font-bold text-white rounded-lg button-glow">
+                    Join WhatsApp Group
+                </button>
+            </div>
+
+            <button id="logout-btn" class="w-full text-center py-2 text-[13px] font-medium text-gray-400 hover:text-white transition-colors bg-slate-900/20 border border-slate-900 rounded-xl mt-2">
+                Log out
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0 bg-[#05050f] relative overflow-y-auto">
+
+        <div class="absolute top-0 left-1/4 w-[600px] h-[200px] bg-brandPurple/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
+
+        <div class="p-4 lg:p-6 space-y-4 relative z-10 flex-1 flex flex-col justify-between">
+            <div class="space-y-4">
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    <div class="bg-[#0d1024] border border-slate-800/60 rounded-xl p-4">
+                        <span class="text-[10px] font-medium text-gray-400 block tracking-wide uppercase">Available Credits</span>
+                        <span id="user-credits" class="text-[15px] font-bold text-white mt-0.5 block">0 credits</span>
+                    </div>
+                    <div class="bg-[#0d1024] border border-slate-800/60 rounded-xl p-4">
+                        <span class="text-[10px] font-medium text-gray-400 block tracking-wide uppercase">Active Plan</span>
+                        <span id="user-plan" class="text-[15px] font-bold text-white mt-0.5 block">Standard</span>
+                    </div>
+                    <div class="bg-[#0d1024] border border-slate-800/60 rounded-xl p-4">
+                        <span class="text-[10px] font-medium text-gray-400 block tracking-wide uppercase">System Status</span>
+                        <div class="flex items-center space-x-1.5 mt-0.5">
+                            <span id="system-status-indicator" class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-pulse"></span>
+                            <span id="system-status-text" class="text-[15px] font-bold text-amber-500">Idle</span>
+                        </div>
+                    </div>
+                    <div class="bg-[#0d1024] border border-slate-800/60 rounded-xl p-4 truncate">
+                        <span class="text-[10px] font-medium text-gray-400 block tracking-wide uppercase">User</span>
+                        <span id="user-email" class="text-[14px] font-semibold text-white mt-0.5 block truncate">Loading...</span>
+                    </div>
+                </div>
+
+                <div class="bg-[#0d1024] border border-slate-800/60 rounded-xl p-3 flex flex-col sm:flex-row items-center gap-3">
+                    <div class="w-full sm:flex-1">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Live AI Render Prompt</label>
+                        <input id="ai-prompt-input" readonly value="Substitute the character in the video with the person in the reference image." class="w-full bg-[#070815] border border-slate-800 rounded-lg px-3 py-1.5 text-[13px] text-white focus:outline-none focus:border-brandLightPurple transition-colors" placeholder="Describe the transformation details...">
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                    <section class="bg-[#0d1024] border border-slate-800/60 rounded-2xl p-4 flex flex-col justify-between space-y-4 shadow-xl">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-[14px] font-bold text-white tracking-tight flex items-center space-x-2">
+                                <span>1. Camera Input</span>
+                            </h2>
+                            <span id="camera-badge" class="px-2 py-0.5 border border-slate-700 text-gray-500 rounded-md text-[10px] font-bold tracking-wide uppercase bg-slate-950/20">Inactive</span>
+                        </div>
+
+                        <div class="relative aspect-video w-full rounded-xl overflow-hidden bg-zinc-950 border border-slate-900 flex items-center justify-center group shadow-inner">
+                            <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-40"></div>
+
+                            <video id="input-camera-feed" autoplay playsinline muted class="w-full h-full object-cover hidden"></video>
+
+                            <div id="camera-placeholder" class="flex flex-col items-center space-y-2 text-gray-600 group-hover:text-gray-400 transition-colors z-10">
+                                <svg class="w-12 h-12 stroke-current" fill="none" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                </svg>
+                                <span class="text-[12px] font-medium tracking-wide uppercase text-gray-500">Camera Input Feed Offline</span>
+                            </div>
+
+                            <div class="absolute bottom-3 left-3 px-2 py-1 bg-black/60 backdrop-blur-md text-[11px] text-gray-300 font-medium rounded-lg border border-white/5 shadow-md">
+                                Private input
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button id="toggle-camera-btn" class="px-4 py-2 text-[13px] font-semibold text-white bg-transparent border-2 border-brandPurple rounded-xl transition-all">
+                                    Start Video
+                                </button>
+                                <button id="toggle-mic-btn" class="px-4 py-2 text-[13px] font-semibold text-gray-400 bg-[#070815] border border-slate-800 rounded-xl hover:text-white transition-all">
+                                    Mic On
+                                </button>
+                                <div class="relative flex-1 min-w-[150px]">
+                                    <select id="camera-device-select" class="w-full px-3 py-2 bg-[#070815] border border-slate-800 rounded-xl text-gray-300 text-[13px] font-medium focus:outline-none appearance-none cursor-pointer">
+                                        <option value="">Querying available video nodes...</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-500">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </div>
+                                </div>
+                                <div class="relative w-24">
+                                    <select class="w-full px-3 py-2 bg-[#070815] border border-slate-800 rounded-xl text-gray-300 text-[13px] font-medium focus:outline-none appearance-none cursor-pointer">
+                                        <option>1080p</option>
+                                        <option>720p</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-500">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-2 text-[11px] text-gray-500 font-medium">
+                                <span id="fps-counter-label">0 fps</span>
+                                <div class="flex items-center space-x-0.5 h-3">
+                                    <span class="w-[3px] h-2 bg-emerald-500 rounded-full"></span>
+                                    <span class="w-[3px] h-3 bg-emerald-500 rounded-full"></span>
+                                    <span class="w-[3px] h-1.5 bg-emerald-500 rounded-full"></span>
+                                    <span class="w-[3px] h-2.5 bg-emerald-500 rounded-full"></span>
+                                    <span class="w-[3px] h-1 bg-emerald-500/30 rounded-full"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="bg-[#0d1024] border border-slate-800/60 rounded-2xl p-4 flex flex-col justify-between space-y-4 shadow-xl">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-[14px] font-bold text-white tracking-tight flex items-center space-x-2">
+                                <span>2. Character Output</span>
+                            </h2>
+                            <span id="output-badge" class="px-2 py-0.5 border border-slate-700 text-gray-500 rounded-md text-[10px] font-bold tracking-wide uppercase bg-slate-950/20">Offline</span>
+                        </div>
+
+                        <div class="relative aspect-video w-full rounded-xl overflow-hidden bg-gradient-to-br from-[#070815] via-[#090b1c] to-[#121636] border border-slate-900 flex items-center justify-center shadow-inner">
+                            <div class="w-32 h-32 bg-brandPurple/10 rounded-full blur-2xl absolute animate-pulse"></div>
+
+                            <video id="output" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+
+                            <div id="output-placeholder" class="text-center text-gray-600 z-10 space-y-1">
+                                <svg class="w-10 h-10 mx-auto stroke-current opacity-70" fill="none" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m3.692-5.096L13.5 21M7.5 6L12 3m0 0l4.5 3M12 3v13.5" />
+                                </svg>
+                                <span class="text-[11px] font-medium tracking-wider uppercase block text-slate-500">Virtual Render Output Surface</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div class="relative w-28">
+                                <select id="model-select-node" class="w-full px-3 py-2 bg-[#070815] border border-slate-800 rounded-xl text-gray-300 text-[13px] font-medium focus:outline-none appearance-none cursor-pointer">
+                                    <option value="EnzoCam-Live-v1">Default (v1)</option>
+                                    <option value="EnzoCam-Pro-v2">Pro Render (v2)</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-500">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                            <button id="quick-avatar-btn" class="px-4 py-2 text-[13px] font-semibold text-gray-300 bg-[#070815] hover:bg-slate-900/40 border border-slate-800 rounded-xl transition-all">
+                                Upload Image
+                            </button>
+                            <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
+                            <button id="start-realtime-session-btn" class="flex-1 min-w-[150px] py-2 text-[13px] font-bold text-white bg-gradient-to-r from-brandPurple to-brandLightPurple hover:opacity-95 transition-all rounded-xl button-glow">
+                                Start Virtual Camera
+                            </button>
+                            <div class="relative w-24">
+                                <select class="w-full px-3 py-2 bg-[#070815] border border-slate-800 rounded-xl text-gray-300 text-[13px] font-medium focus:outline-none appearance-none cursor-pointer">
+                                    <option>1080p</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-500">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+
+            <footer class="bg-[#05050f] border border-slate-900/60 rounded-xl p-3.5 flex flex-col md:flex-row items-start md:items-center justify-between text-[12px] text-gray-500 font-medium space-y-2 md:space-y-0 mt-4">
+                <div>
+                    Session usage: <span id="session-usage-display" class="text-gray-400">0s / unlimited session</span>
+                </div>
+                <div>
+                    Today's usage: <span id="daily-usage-display" class="text-gray-400">0s</span>
+                </div>
+                <div>
+                    Credits used: <span id="footer-credits" class="text-gray-400">0 of 0</span>
+                </div>
+            </footer>
+
+        </div>
+
+        <button class="fixed bottom-4 right-4 w-12 h-12 bg-gradient-to-tr from-brandPurple to-[#6b21a8] text-white flex items-center justify-center rounded-full shadow-2xl button-glow hover:scale-105 active:scale-95 transition-transform z-30">
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L1 17l1.338-3.123C1.493 12.76 1 11.434 1 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path>
+            </svg>
+        </button>
+    </main>
+
+    <div id="custom-popup" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div class="bg-[#0d1024] border border-slate-800 rounded-2xl p-6 max-w-sm w-full mx-4 relative z-10 shadow-2xl transform transition-all duration-300">
+        <div class="flex items-center space-x-3 text-purple-400 mb-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <h3 class="text-[16px] font-bold text-white tracking-tight">System Notification</h3>
+        </div>
+        <p id="popup-message" class="text-[13px] text-gray-400 leading-relaxed mb-5">Notification text placeholder...</p>
+        <button onclick="closeCustomPopup()" class="w-full py-2 bg-gradient-to-r from-brandPurple to-brandLightPurple hover:opacity-95 text-[13px] font-bold text-white rounded-xl button-glow transition-all">
+            Acknowledge
+        </button>
+    </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5000/api/lucy';
+
+// State tracking structures for profile context
+let currentCredits = 0;
+let originalTotalCredits = 0;
+let baseDailySeconds = 0;
+
+// Session metrics & pipeline timing keys
+let activeSessionId = null;
+let sessionTimer = null;
+let sessionSecondsElapsed = 0;
+const BILLING_RATE_PER_SECOND = 2;
+
+// Camera hardware variables
+let mediaStreamInstance = null;
+let isCameraActive = false;
+
+// Synchronize and update credit metric readouts cleanly across indicators
+function renderCreditBalances(balance) {
+    console.log(`[UI Render] Updating balances to: ${balance} credits`);
+    currentCredits = Math.max(0, balance);
+
+    const creditsEl = document.getElementById('user-credits');
+    if (creditsEl) creditsEl.textContent = `${currentCredits} credits`;
+
+    const totalUsed = Math.max(0, originalTotalCredits - currentCredits);
+    const footerEl = document.getElementById('footer-credits');
+    if (footerEl) footerEl.textContent = `${totalUsed} of ${originalTotalCredits}`;
+}
+
+// Handle profile lookup mapping on initiation sequence
+async function fetchUserInfo() {
+    const sessionBtn = document.getElementById('start-realtime-session-btn');
+    try {
+        console.log("🚩 [Auth Sync] Contacting auth/me endpoint...");
+
+        // 🚩 1. Pull the string key matching exactly 'token' from localStorage
+        const token = localStorage.getItem('token');
+
+        const response = await fetch('http://localhost:5000/api/auth/me', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                // 🚩 2. Attach the token natively via the Bearer standard
+                'Authorization': token ? `Bearer ${token}` : ''
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("🚩 [Auth Sync] Raw JSON payload returned from server:", data);
+
+            // 1. Correctly read from the flat root payload
+            const availableCredits = data.credits !== undefined ? Number(data.credits) : 0;
+
+            // 2. Keep your global session management variables updated
+            originalTotalCredits = availableCredits;
+            currentCredits = availableCredits;
+
+            // 3. Update visual UI fields cleanly
+            const emailEl = document.getElementById('user-email');
+            if (emailEl) emailEl.textContent = data.email || 'No email set';
+
+            const creditsEl = document.getElementById('user-credits');
+            if (creditsEl) creditsEl.textContent = `${availableCredits} credits`;
+
+            const footerEl = document.getElementById('footer-credits');
+            if (footerEl) footerEl.textContent = `0 of ${availableCredits}`;
+
+            const planEl = document.getElementById('user-plan');
+            if (planEl) planEl.textContent = data.plan || 'Free Tier';
+
+            // 4. Safely re-enable button tracking parameters
+            if (sessionBtn && !activeSessionId) {
+                sessionBtn.disabled = false;
+                sessionBtn.textContent = "Start Virtual Camera";
+            }
+        } else {
+            console.warn(`⚠️ [Auth Sync] Unauthenticated profile status access. Status: ${response.status}`);
+
+            // 🚩 3. Clean local storage on rejection to clear corrupt references
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        }
+    } catch (error) {
+        console.error('❌ Critical crash inside fetchUserInfo operational pipeline:', error);
+        if (sessionBtn) sessionBtn.textContent = "Connection Failure";
+    }
+}
+// Query attached peripherals and append to select nodes
+async function populateVideoInputDevices() {
+    const selectNode = document.getElementById('camera-device-select');
+    if (!selectNode) return;
+    try {
+        await navigator.mediaDevices.getUserMedia({ video: true }).then(s => s.getTracks().forEach(t => t.stop()));
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoNodes = devices.filter(d => d.kind === 'videoinput');
+
+        selectNode.innerHTML = '';
+        if (videoNodes.length === 0) {
+            selectNode.innerHTML = '<option value="">No video inputs found</option>';
+            return;
+        }
+
+        videoNodes.forEach((device, index) => {
+            const opt = document.createElement('option');
+            opt.value = device.deviceId;
+            opt.textContent = device.label || `Camera Node ${index + 1}`;
+            selectNode.appendChild(opt);
+        });
+    } catch (err) {
+        selectNode.innerHTML = '<option value="">Hardware permissions denied</option>';
+    }
+}
+
+// Local video input hardware handling
+async function toggleLocalCameraFeed() {
+    const videoEl = document.getElementById('input-camera-feed');
+    const placeholderEl = document.getElementById('camera-placeholder');
+    const toggleBtn = document.getElementById('toggle-camera-btn');
+    const badgeEl = document.getElementById('camera-badge');
+    const deviceSelect = document.getElementById('camera-device-select');
+    const selectedDeviceId = deviceSelect ? deviceSelect.value : '';
+
+    if (!videoEl || !placeholderEl || !toggleBtn || !badgeEl) return;
+
+    if (isCameraActive) {
+        if (mediaStreamInstance) {
+            mediaStreamInstance.getTracks().forEach(track => track.stop());
+        }
+        videoEl.srcObject = null;
+        videoEl.classList.add('hidden');
+        placeholderEl.classList.remove('hidden');
+        toggleBtn.textContent = "Start Video";
+        badgeEl.textContent = "Inactive";
+        badgeEl.className = "px-2 py-0.5 border border-slate-700 text-gray-500 rounded-md text-[10px] font-bold tracking-wide uppercase bg-slate-950/20";
+        const fpsLabel = document.getElementById('fps-counter-label');
+        if (fpsLabel) fpsLabel.textContent = "0 fps";
+        isCameraActive = false;
+    } else {
+        try {
+            const constraints = {
+                video: selectedDeviceId ? { deviceId: { exact: selectedDeviceId } } : true,
+                audio: false
+            };
+            mediaStreamInstance = await navigator.mediaDevices.getUserMedia(constraints);
+            videoEl.srcObject = mediaStreamInstance;
+            videoEl.classList.remove('hidden');
+            placeholderEl.classList.add('hidden');
+            toggleBtn.textContent = "Stop Video";
+            badgeEl.textContent = "Live";
+            badgeEl.className = "px-2 py-0.5 border border-emerald-900/60 text-emerald-400 rounded-md text-[10px] font-bold tracking-wide uppercase bg-emerald-950/30";
+            const fpsLabel = document.getElementById('fps-counter-label');
+            if (fpsLabel) fpsLabel.textContent = "30 fps";
+            isCameraActive = true;
+        } catch (err) {
+            alert(`Failed to lock device track nodes: ${err.message}`);
+        }
+    }
+}
+
+function showNotification(message) {
+    console.log(`[Notification Alert]: ${message}`);
+    const msgEl = document.getElementById('popup-message');
+    const popupEl = document.getElementById('custom-popup');
+    if (msgEl && popupEl) {
+        msgEl.textContent = message;
+        popupEl.classList.remove('hidden');
+    }
+}
+
+function closeCustomPopup() {
+    const popupEl = document.getElementById('custom-popup');
+    if (popupEl) popupEl.classList.add('hidden');
+}
+
+// 🚩 MODIFIED: Separated from the start function so it can be triggered on-demand
+function beginBillingCountdown() {
+    if (sessionTimer) clearInterval(sessionTimer);
+
+    console.log("🚀 [Billing Pipeline] Remote stream verified live. Starting countdown ticking ledger.");
+    sessionSecondsElapsed = 0;
+    sessionTimer = setInterval(executeSessionSyncTick, 1000);
+}
+window.triggerBillingStart = beginBillingCountdown;
+async function startVirtualCameraSession() {
+    console.log("=== FRONTEND: startVirtualCameraSession Action Initiated ===");
+    const sessionBtn = document.getElementById('start-realtime-session-btn');
+
+    if (currentCredits <= 0) {
+        showNotification(`Insufficient credits (Balance: ${currentCredits})`);
+        return;
+    }
+
+    sessionBtn.disabled = true;
+    sessionBtn.textContent = "Connecting...";
+
+    // 1. Trigger the Decart module connection
+    if (window.startDecartStreamConnection) {
+        await window.startDecartStreamConnection();
+    }
+
+    // 2. WAIT for the Decart module to populate the session ID
+    // We poll the global variable until it exists or we timeout (5 seconds)
+    let attempts = 0;
+    while (!window.activeSessionId && attempts < 10) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        attempts++;
+    }
+
+    activeSessionId = window.activeSessionId;
+    if (!activeSessionId) {
+        showNotification("Failed to acquire streaming session ID. Please try again.");
+        sessionBtn.disabled = false;
+        sessionBtn.textContent = "Start Virtual Camera";
+        return;
+    }
+
+    // 3. Register with your Backend AFTER we have the ID
+    try {
+        const modelSelectEl = document.getElementById('model-select-node');
+        const modelUsed = modelSelectEl ? modelSelectEl.value : 'default-model';
+
+        const response = await fetch(`${API_BASE}/sessions/start`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ modelUsed, sessionId: activeSessionId }),
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error("Backend failed to start session");
+
+        // UI updates
+        document.getElementById('system-status-text').textContent = "Negotiating Feed...";
+    } catch (err) {
+        showNotification(`Session Handshake Blocked: ${err.message}`);
+        sessionBtn.disabled = false;
+        sessionBtn.textContent = "Start Virtual Camera";
+    }
+}
+
+
+async function executeSessionSyncTick() {
+    sessionSecondsElapsed++;
+    const proposedBalance = currentCredits - BILLING_RATE_PER_SECOND;
+
+    const usageDisplay = document.getElementById('session-usage-display');
+    if (usageDisplay) usageDisplay.textContent = `${sessionSecondsElapsed}s / unlimited session`;
+
+    const dailyDisplay = document.getElementById('daily-usage-display');
+    if (dailyDisplay) dailyDisplay.textContent = `${baseDailySeconds + sessionSecondsElapsed}s`;
+
+    if (proposedBalance <= 0) {
+        renderCreditBalances(0);
+        clearInterval(sessionTimer);
+        await stopVirtualCameraSession("Automatic disconnection triggered by dry balance.");
+        return;
+    }
+
+    renderCreditBalances(proposedBalance);
+
+    if (sessionSecondsElapsed % 5 === 0) {
+        try {
+            const response = await fetch(`${API_BASE}/sessions/sync`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId: activeSessionId,
+                    secondsElapsed: 5,
+                    creditsConsumed: 5 * BILLING_RATE_PER_SECOND,
+                    isFinal: false
+                }),
+                credentials: 'include'
+            });
+            const data = await response.json();
+            if (response.ok) renderCreditBalances(data.remainingCredits);
+        } catch (err) {
+            console.error("Pipeline Sync Warning:", err.message);
+        }
+    }
+}
+
+async function stopVirtualCameraSession(forcedErrorMessage = null) {
+    clearInterval(sessionTimer);
+    const sessionBtn = document.getElementById('start-realtime-session-btn');
+    if (sessionBtn) {
+        sessionBtn.disabled = true;
+        sessionBtn.textContent = "Closing...";
+    }
+
+    const dynamicRemainderSeconds = sessionSecondsElapsed % 5;
+    const finalCreditsToDebit = dynamicRemainderSeconds * BILLING_RATE_PER_SECOND;
+
+    try {
+        const response = await fetch(`${API_BASE}/sessions/sync`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                sessionId: activeSessionId,
+                secondsElapsed: dynamicRemainderSeconds,
+                creditsConsumed: finalCreditsToDebit,
+                isFinal: true,
+                errorMessage: forcedErrorMessage
+            }),
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (response.ok) renderCreditBalances(data.remainingCredits);
+    } catch (err) {
+        console.error(err);
+    }
+
+    baseDailySeconds += sessionSecondsElapsed;
+    activeSessionId = null;
+    sessionSecondsElapsed = 0;
+
+    if (sessionBtn) {
+        sessionBtn.textContent = "Start Virtual Camera";
+        sessionBtn.className = "flex-1 min-w-[150px] py-2 text-[13px] font-bold text-white bg-gradient-to-r from-brandPurple to-brandLightPurple hover:opacity-95 transition-all rounded-xl button-glow";
+        sessionBtn.disabled = false;
+    }
+    if (forcedErrorMessage) alert(forcedErrorMessage);
+}
+
+async function handleLogout() {
+    if (activeSessionId) await stopVirtualCameraSession("Session killed via sign-out workflow.");
+    try {
+        await fetch('https://faceverse-ai.onrender.com/api/auth/logout', { method: 'POST', credentials: 'include' });
+        window.location.href = '/index.html';
+    } catch (error) {
+        window.location.href = '/index.html';
+    }
+}
+
+// 🚩 THE SINGLE MASTER LIFECYCLE BLOCK
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("🚩 [Lifecycle Engine] DOM Fully loaded. Initializing workflows...");
+
+    // Call Core Functions
+    fetchUserInfo();
+    populateVideoInputDevices();
+
+    const addSafeListener = (id, event, handler) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener(event, handler);
+    };
+
+    addSafeListener('logout-btn', 'click', handleLogout);
+    addSafeListener('toggle-camera-btn', 'click', toggleLocalCameraFeed);
+    addSafeListener('close-popup-btn', 'click', closeCustomPopup);
+
+    // 🚩 ADDED LOGIC FOR SCRIPT 1 INTERACTION
+    addSafeListener('start-realtime-session-btn', 'click', () => {
+        if (!activeSessionId) {
+            startVirtualCameraSession();
+        } else {
+            stopVirtualCameraSession();
+        }
+    });
+
+    const fileInputNode = document.getElementById('avatar-file-input');
+    if (fileInputNode) {
+        addSafeListener('upload-avatar-trigger', 'click', () => fileInputNode.click());
+        addSafeListener('quick-avatar-btn', 'click', () => fileInputNode.click());
+        // Find this block in Script 1 and update it:
+  fileInputNode.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+          // BRIDGE: Call the module's processFileUpload function directly
+          if (window.processFileUpload) {
+              window.processFileUpload(e.target.files[0]);
+          }
+      }
+  });
+    }
+});
+</script>
+
+<script type="module">
+  import { createDecartClient, models } from "@decartai/sdk";
+  // Add this inside your <script type="module">
+  window.processFileUpload = processFileUpload;
+  // Internal UI State
+  let localStream = null;
+  let realtimeClient = null;
+  let selectedCharacterImage = null;
+  let isAudioMuted = true;
+
+  // Interface DOM Selectors
+  const inputVideo = document.getElementById("input-camera-feed");
+  const outputVideo = document.getElementById("output");
+  const cameraPlaceholder = document.getElementById("camera-placeholder");
+  const outputPlaceholder = document.getElementById("output-placeholder");
+  const toggleCameraBtn = document.getElementById("toggle-camera-btn");
+  const toggleMicBtn = document.getElementById("toggle-mic-btn");
+  const startSessionBtn = document.getElementById("start-realtime-session-btn");
+  const deviceSelect = document.getElementById("camera-device-select");
+  const fileInput = document.getElementById("avatar-file-input");
+  const uploadTrigger = document.getElementById("upload-avatar-trigger");
+  const quickAvatarBtn = document.getElementById("quick-avatar-btn");
+  const promptInput = document.getElementById("ai-prompt-input");
+  const cameraBadge = document.getElementById("camera-badge");
+  const outputBadge = document.getElementById("output-badge");
+  const fpsLabel = document.getElementById("fps-counter-label");
+  const statusIndicator = document.getElementById("system-status-indicator");
+  const statusText = document.getElementById("system-status-text");
+
+  const model = models.realtime("lucy-2.1");
+
+  // Enumerate accessible video capture devices
+  async function loadCameraDevices() {
+      try {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const videoDevices = devices.filter(d => d.kind === 'videoinput');
+          deviceSelect.innerHTML = '';
+
+          if(videoDevices.length === 0) {
+              deviceSelect.innerHTML = '<option value="">No cameras detected</option>';
+              return;
+          }
+
+          videoDevices.forEach((device, index) => {
+              const option = document.createElement('option');
+              option.value = device.deviceId;
+              option.text = device.label || `Camera ${index + 1}`;
+              deviceSelect.appendChild(option);
+          });
+      } catch (err) {
+          console.error("Failed to query hardware devices:", err);
+      }
+  }
+
+  // Handle native media tracking
+  async function startLocalCamera() {
+      if (localStream) {
+          stopLocalCamera();
+      }
+
+      const deviceId = deviceSelect.value;
+      const constraints = {
+          video: {
+              frameRate: model.fps,
+              width: model.width,
+              height: model.height,
+              ...(deviceId ? { deviceId: { exact: deviceId } } : {})
+          },
+          audio: true
+      };
+
+      try {
+          localStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+          // Mute audio track by default locally until explicitly enabled
+          localStream.getAudioTracks().forEach(track => track.enabled = !isAudioMuted);
+
+          inputVideo.srcObject = localStream;
+          inputVideo.classList.remove("hidden");
+          cameraPlaceholder.classList.add("hidden");
+
+          cameraBadge.textContent = "Live";
+          cameraBadge.className = "px-2 py-0.5 border border-emerald-500/30 text-emerald-500 rounded-md text-[10px] font-bold tracking-wide uppercase bg-emerald-950/20";
+          toggleCameraBtn.textContent = "Stop Video";
+          fpsLabel.textContent = `${model.fps} fps`;
+
+          // If an active connection exists, replace the underlying track dynamically
+          if (realtimeClient) {
+              await rebootRealtimeSession();
+          }
+      } catch (err) {
+          console.error("Camera acquisition failure:", err);
+          alert("Could not access camera. Check permissions.");
+      }
+  }
+
+  function stopLocalCamera() {
+      if (localStream) {
+          localStream.getTracks().forEach(track => track.stop());
+          localStream = null;
+      }
+      inputVideo.srcObject = null;
+      inputVideo.classList.add("hidden");
+      cameraPlaceholder.classList.remove("hidden");
+      cameraBadge.textContent = "Inactive";
+      cameraBadge.className = "px-2 py-0.5 border border-slate-700 text-gray-500 rounded-md text-[10px] font-bold tracking-wide uppercase bg-slate-950/20";
+      toggleCameraBtn.textContent = "Start Video";
+      fpsLabel.textContent = "0 fps";
+  }
+
+  // Initialize Engine Link Hook
+  async function startRealtimeSession() {
+      if (!localStream) {
+          await startLocalCamera();
+          if (!localStream) return;
+      }
+
+      statusIndicator.className = "w-2 h-2 rounded-full bg-blue-500 inline-block animate-pulse";
+      statusText.textContent = "Connecting...";
+      statusText.className = "text-[15px] font-bold text-blue-500";
+
+      try {
+          const client = createDecartClient({
+              apiKey: "dct_ok_hbJfbwuVMTGuBNZseHqDqelrEsYtkMvLMTlkruHvNoAkQWWXSLNyYNzSxZZnVRpK",
+          });
+
+          const sessionPayload = {
+              model,
+              mirror: "auto",
+              onRemoteStream: (transformedStream) => {
+                    outputVideo.srcObject = transformedStream;
+                    outputVideo.classList.remove("hidden");
+                    outputPlaceholder.classList.add("hidden");
+
+                    outputBadge.textContent = "Live";
+                    outputBadge.className = "px-2 py-0.5 border border-emerald-500/30 text-emerald-500 rounded-md text-[10px] font-bold tracking-wide uppercase bg-emerald-950/20";
+
+                    statusIndicator.className = "w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse";
+                    statusText.textContent = "Live";
+                    statusText.className = "text-[15px] font-bold text-emerald-500";
+
+                    // 🚩 ADDED: The stream is officially receiving bytes now. Trigger credit tracking!
+                    if (window.triggerBillingStart) {
+                        window.triggerBillingStart();
+                    }
+
+                    // Update button status to let users drop the stream cleanly
+                    if (startSessionBtn) {
+                        startSessionBtn.textContent = "Terminate Live Stream";
+                        startSessionBtn.className = "flex-1 min-w-[150px] py-2 text-[13px] font-bold text-white bg-gradient-to-r from-red-600 to-rose-700 hover:opacity-95 transition-all rounded-xl button-glow";
+                        startSessionBtn.disabled = false;
+                    }
+                },
+              initialState: {
+                  prompt: {
+                      text: promptInput.value || "Enhance video output clarity, natural lighting.",
+                      enhance: true,
+                  },
+              },
+          };
+
+          realtimeClient = await client.realtime.connect(localStream, sessionPayload);
+
+          // 🚩 FIXED: Decart client returns its actual connection session ID mapping metadata here
+          // We assign this directly to the global window runtime space so the first script block reads it.
+          if (realtimeClient && realtimeClient.sessionId) {
+              window.activeSessionId = realtimeClient.sessionId;
+              console.log("🔗 Connected to Decart Engine. Session Token Shared:", window.activeSessionId);
+          }
+
+          startSessionBtn.textContent = "Terminate Live Stream";
+          startSessionBtn.className = "flex-1 min-w-[150px] py-2 text-[13px] font-bold text-white bg-gradient-to-r from-red-600 to-rose-700 hover:opacity-95 transition-all rounded-xl button-glow";
+
+          if (selectedCharacterImage) {
+              await syncTransformationState();
+          }
+
+      } catch (err) {
+          console.error("Decart pipeline initialization dropped:", err);
+          statusIndicator.className = "w-2 h-2 rounded-full bg-red-500 inline-block";
+          statusText.textContent = "Error";
+          statusText.className = "text-[15px] font-bold text-red-500";
+          alert("Failed to establish real-time link connection.");
+      }
+  }
+
+  async function closeRealtimeSession() {
+      if (realtimeClient) {
+          try {
+              await realtimeClient.disconnect();
+          } catch (err) {
+              console.error("Error closing realtime client:", err);
+          }
+          realtimeClient = null;
+      }
+
+      if (outputVideo.srcObject) {
+          const tracks = outputVideo.srcObject.getTracks();
+          tracks.forEach(t => t.stop());
+          outputVideo.srcObject = null;
+      }
+
+      outputVideo.classList.add("hidden");
+      outputPlaceholder.classList.remove("hidden");
+
+      outputBadge.textContent = "Offline";
+      outputBadge.className = "px-2 py-0.5 border border-slate-700 text-gray-500 rounded-md text-[10px] font-bold tracking-wide uppercase bg-slate-950/20";
+
+      statusIndicator.className = "w-2 h-2 rounded-full bg-amber-500 inline-block animate-pulse";
+      statusText.textContent = "Idle";
+      statusText.className = "text-[15px] font-bold text-amber-500";
+
+      startSessionBtn.textContent = "Start Virtual Camera";
+      startSessionBtn.className = "flex-1 min-w-[150px] py-2 text-[13px] font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-700 hover:opacity-95 transition-all rounded-xl button-glow";
+  }
+
+  async function rebootRealtimeSession() {
+      closeRealtimeSession();
+      await startRealtimeSession();
+  }
+
+  async function syncTransformationState() {
+      if (!realtimeClient) return;
+
+      const stateUpdate = {
+          prompt: promptInput.value,
+          enhance: true
+      };
+
+      if (selectedCharacterImage) {
+          stateUpdate.image = selectedCharacterImage;
+      }
+
+      try {
+          await realtimeClient.set(stateUpdate);
+      } catch (error) {
+          console.error("Failed to commit parameter mutations onto engine payload:", error);
+      }
+  }
+
+  function processFileUpload(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+          selectedCharacterImage = e.target.result;
+          alert(`Avatar Reference loaded: ${file.name}`);
+          await syncTransformationState();
+      };
+      reader.readAsDataURL(file);
+  }
+
+  // 🚩 REMOVED: Isolated duplicate click handlers here to prevent race condition crashes.
+  // The first script block is already listening on startSessionBtn, toggleCameraBtn, and file uploads cleanly.
+
+  toggleMicBtn.addEventListener("click", () => {
+      isAudioMuted = !isAudioMuted;
+      if (localStream) {
+          localStream.getAudioTracks().forEach(track => track.enabled = !isAudioMuted);
+      }
+      toggleMicBtn.textContent = isAudioMuted ? "Mic On" : "Mic Muted";
+      toggleMicBtn.className = isAudioMuted
+          ? "px-4 py-2 text-[13px] font-semibold text-gray-400 bg-[#070815] border border-slate-800 rounded-xl hover:text-white transition-all"
+          : "px-4 py-2 text-[13px] font-semibold text-white bg-red-950/40 border border-red-900/50 rounded-xl transition-all";
+  });
+
+  deviceSelect.addEventListener("change", () => {
+      if (localStream) {
+          startLocalCamera();
+      }
+  });
+
+  // 🚩 ADDED: Expose execution actions safely onto window object space
+  // This allows Script 1 to trigger stream setups seamlessly alongside database insertions
+  window.startDecartStreamConnection = startRealtimeSession;
+  window.stopDecartStreamConnection = closeRealtimeSession;
+
+  let debounceTimeout;
+  promptInput.addEventListener("input", () => {
+      clearTimeout(debounceTimeout);
+      debounceTimeout = setTimeout(() => {
+          syncTransformationState();
+      }, 400);
+  });
+
+  navigator.mediaDevices.addEventListener('devicechange', loadCameraDevices);
+  loadCameraDevices();
+</script>
+</body>
+</html>

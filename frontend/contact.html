@@ -2,106 +2,163 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - FaceVerseAi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Contact · MorphSync identity layer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        darkBg: '#05050f',
-                        cardBg: '#0d1024',
-                        brandPurple: '#9333ea',
-                        brandLightPurple: '#a855f7',
+                        void: '#0a0a0f',
+                        surface: '#111118',
+                        edge: '#1e1e28',
+                        neon: '#38f5d4',
+                        glow: '#6d28d9',
+                        dusk: '#f97316',
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['"Inter"', 'system-ui', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    animation: {
+                        'soft-glow': 'softGlow 4s ease-in-out infinite alternate',
+                        'drift': 'drift 10s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        softGlow: {
+                            '0%': { boxShadow: '0 0 30px rgba(56,245,212,0.1)' },
+                            '100%': { boxShadow: '0 0 60px rgba(109,40,217,0.2)' },
+                        },
+                        drift: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        },
+                    },
+                    backgroundImage: {
+                        'mesh': 'radial-gradient(circle at 15% 25%, rgba(56,245,212,0.03) 0%, transparent 50%), radial-gradient(circle at 85% 75%, rgba(109,40,217,0.05) 0%, transparent 55%)',
                     }
                 }
             }
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap');
         body {
+            background-color: #0a0a0f;
             font-family: 'Inter', sans-serif;
-            background-color: #05050f;
         }
-        .text-glow {
-            text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        .glass-panel {
+            background: rgba(17, 17, 24, 0.75);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(56, 245, 212, 0.1);
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.6);
         }
-        .button-glow {
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            border-color: rgba(56, 245, 212, 0.3);
+            box-shadow: 0 24px 38px -14px rgba(56,245,212,0.08);
+        }
+        .text-gradient-brand {
+            background: linear-gradient(135deg, #38f5d4 0%, #a78bfa 50%, #f97316 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .btn-glow {
+            background: linear-gradient(120deg, #2dd4bf, #7c3aed);
+            box-shadow: 0 8px 22px -8px #7c3aed70;
+            transition: all 0.3s ease;
+        }
+        .btn-glow:hover {
+            box-shadow: 0 14px 30px -6px #38f5d480;
+            filter: brightness(1.1);
+        }
+        .input-focus {
+            transition: all 0.2s ease;
+        }
+        .input-focus:focus {
+            border-color: rgba(56, 245, 212, 0.5);
+            box-shadow: 0 0 0 3px rgba(56, 245, 212, 0.1);
+            outline: none;
         }
     </style>
+<base target="_blank">
 </head>
-<body class="text-gray-300 antialiased min-h-screen flex flex-col justify-between selection:bg-purple-500 selection:text-white relative overflow-x-hidden">
+<body class="text-gray-200 antialiased bg-mesh relative min-h-screen flex flex-col">
 
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-brandPurple/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
-
-    <div class="sticky top-0 z-50 w-full bg-[#05050f]/40 backdrop-blur-md pt-4 pb-2">
-        <header class="w-full max-w-6xl mx-auto px-4">
-            <nav class="flex items-center justify-between bg-[#0d1024]/80 backdrop-blur-lg border border-slate-800/80 px-6 py-3 rounded-2xl shadow-xl">
-
-                <a href="/index.html" class="flex items-center space-x-3 group">
-                    <div class="relative w-7 h-7 flex items-center justify-center rounded-full border-2 border-dashed border-brandLightPurple/60 group-hover:rotate-45 transition-transform duration-500">
-                        <div class="w-4 h-4 rounded-full bg-gradient-to-tr from-blue-500 to-brandLightPurple flex items-center justify-center">
-                            <div class="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_4px_#fff]"></div>
-                        </div>
-                        <div class="absolute -inset-1 border border-blue-500/30 rounded-lg scale-75 opacity-70"></div>
-                    </div>
-                    <span class="text-xl font-extrabold tracking-tight text-white">
-                        Enzo<span class="text-brandLightPurple">Cam</span>
-                    </span>
-                </a>
-
-                <div class="hidden md:flex items-center space-x-8 text-[14px] font-medium text-gray-400">
-                    <a href="/index.html#features" class="hover:text-white transition-colors">Features</a>
-                    <a href="/index.html#how-it-works" class="hover:text-white transition-colors">How it Works</a>
-                    <a href="/index.html#pricing" class="hover:text-white transition-colors">Pricing</a>
-                    <a href="/about.html" class="hover:text-white transition-colors">About</a>
-                    <a href="/contact.html" class="text-white transition-colors font-semibold">Contact</a>
-                </div>
-
-                <div id="auth-container" class="flex items-center space-x-4">
-                    <a href="/auth.html" class="text-[14px] font-semibold text-gray-300 hover:text-white transition-colors px-3 py-2">
-                        Log in
-                    </a>
-                    <a href="/auth.html" class="text-[14px] font-semibold text-white bg-gradient-to-r from-brandPurple to-brandLightPurple hover:opacity-95 transition-all px-5 py-2.5 rounded-xl button-glow">
-                        Get Started
-                    </a>
-                </div>
-            </nav>
-        </header>
+    <!-- ambient orbs -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute top-[-15%] left-[-8%] w-[500px] h-[500px] bg-neon/8 rounded-full blur-[140px] animate-soft-glow"></div>
+        <div class="absolute bottom-[-12%] right-[-5%] w-[450px] h-[450px] bg-glow/10 rounded-full blur-[130px]"></div>
     </div>
 
-    <main class="relative z-10 flex-1 w-full max-w-6xl mx-auto px-4 py-8 space-y-6">
+    <!-- header -->
+    <header class="sticky top-4 z-50 w-[92%] max-w-6xl mx-auto">
+        <nav class="flex items-center justify-between glass-panel px-6 py-3 rounded-2xl">
+            <a href="/index.html" class="flex items-center gap-3 group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-neon to-glow flex items-center justify-center shadow-[0_0_18px_rgba(56,245,212,0.5)] group-hover:rotate-6 transition-transform">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16l-2.3 2.3a1 1 0 01-1.4-1.4L6.6 14.6M16 8l2.3-2.3a1 1 0 011.4 1.4L17.4 9.4M12 4v4m0 8v4M4 12h4m8 0h4M8.5 8.5l7 7" />
+                    </svg>
+                </div>
+                <span class="text-xl font-semibold tracking-tight text-white">Morph<span class="text-neon">Sync</span><span class="text-dusk font-light ml-0.5">·ai</span></span>
+            </a>
 
-        <section class="bg-[#0d1024] border border-slate-800/60 rounded-2xl p-8 lg:p-10 shadow-xl">
-            <div class="flex items-center space-x-2 mb-4">
-                <span class="w-3 h-[1px] bg-brandLightPurple"></span>
-                <span class="text-[11px] font-bold tracking-widest text-brandLightPurple uppercase">Contact</span>
+            <div class="hidden md:flex items-center gap-7 text-sm font-medium text-gray-400">
+                <a href="/index.html#features" class="hover:text-neon transition-colors">Features</a>
+                <a href="/index.html#showcase" class="hover:text-neon transition-colors">Showcase</a>
+                <a href="/index.html#how" class="hover:text-neon transition-colors">Workflow</a>
+                <a href="/about.html" class="hover:text-neon transition-colors">About</a>
+                <a href="/contact.html" class="text-neon font-semibold">Contact</a>
+            </div>
+
+            <div id="auth-container" class="flex items-center space-x-4">
+                <div id="auth-buttons" class="flex items-center space-x-4">
+                    <a href="/auth.html" class="text-sm font-medium text-gray-300 hover:text-white transition-colors px-4 py-2 rounded-xl bg-white/5 border border-gray-700/60 hover:border-neon/60">Log in</a>
+                    <a href="/auth.html" class="text-sm font-semibold text-gray-900 bg-neon hover:bg-[#2ce4c2] px-5 py-2.5 rounded-xl transition-all shadow-[0_0_20px_rgba(56,245,212,0.3)]">Get Started</a>
+                </div>
+                <div id="user-profile" class="hidden flex items-center space-x-3">
+                    <span class="text-sm text-gray-300 font-medium">Dashboard</span>
+                    <a href="/Home.html" class="text-xs bg-neon/20 text-neon border border-neon/40 px-3 py-1.5 rounded-lg hover:bg-neon/30 transition-all">Go to Home</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- main content -->
+    <main class="relative z-10 flex-1 w-full max-w-6xl mx-auto px-4 py-10 space-y-8">
+
+        <!-- hero contact card -->
+        <section class="glass-panel rounded-2xl p-8 lg:p-10 hover-lift">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="w-3 h-[1px] bg-neon"></span>
+                <span class="text-[11px] font-bold tracking-[0.2em] text-neon uppercase">Contact</span>
             </div>
             <h1 class="text-3xl lg:text-4xl font-bold text-white tracking-tight mb-4">
-                Talk to the right team
+                Talk to the <span class="text-gradient-brand">right team</span>
             </h1>
             <p class="text-[15px] text-gray-400 leading-relaxed max-w-4xl">
-                Pick the inbox that fits your enquiry &mdash; we typically reply within one business day.
+                Pick the inbox that fits your enquiry — we typically reply within one business day.
             </p>
         </section>
 
-        <section class="bg-[#0d1024] border border-slate-800/60 rounded-2xl p-8 lg:p-10 shadow-xl space-y-6">
-            <h2 class="text-xl font-bold text-white tracking-tight">
+        <!-- email inboxes -->
+        <section class="glass-panel rounded-2xl p-8 lg:p-10 space-y-6 hover-lift">
+            <h2 class="text-xl font-bold text-white tracking-tight flex items-center gap-3">
+                <span class="w-8 h-8 rounded-lg bg-neon/10 flex items-center justify-center text-neon text-sm">📬</span>
                 Where to reach us
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
-                <div class="bg-[#090b16]/50 border border-slate-800/50 rounded-xl p-5 flex flex-col justify-between space-y-4">
+                <div class="bg-surface/60 border border-edge/60 rounded-xl p-5 flex flex-col justify-between space-y-4 hover-lift">
                     <div>
                         <span class="text-[10px] font-bold text-gray-500 tracking-wider uppercase block mb-1">Customer Support</span>
-                        <a href="mailto:support@enzocam1.com" class="text-[14px] font-bold text-white hover:text-brandLightPurple transition-colors break-all">
-                            support@enzocam1.com
+                        <a href="mailto:support@morphsync.ai" class="text-[14px] font-bold text-white hover:text-neon transition-colors break-all">
+                            support@morphsync.ai
                         </a>
                     </div>
                     <p class="text-[13px] text-gray-400 leading-relaxed">
@@ -109,23 +166,23 @@
                     </p>
                 </div>
 
-                <div class="bg-[#090b16]/50 border border-slate-800/50 rounded-xl p-5 flex flex-col justify-between space-y-4">
+                <div class="bg-surface/60 border border-edge/60 rounded-xl p-5 flex flex-col justify-between space-y-4 hover-lift">
                     <div>
                         <span class="text-[10px] font-bold text-gray-500 tracking-wider uppercase block mb-1">Billing & Payments</span>
-                        <a href="mailto:billing@enzocam1.com" class="text-[14px] font-bold text-white hover:text-brandLightPurple transition-colors break-all">
-                            billing@enzocam1.com
+                        <a href="mailto:billing@morphsync.ai" class="text-[14px] font-bold text-white hover:text-neon transition-colors break-all">
+                            billing@morphsync.ai
                         </a>
                     </div>
                     <p class="text-[13px] text-gray-400 leading-relaxed">
-                        Refunds, receipts, manual transfers, missing credits.
+                        Refunds, receipts, manual transfers, session credits.
                     </p>
                 </div>
 
-                <div class="bg-[#090b16]/50 border border-slate-800/50 rounded-xl p-5 flex flex-col justify-between space-y-4">
+                <div class="bg-surface/60 border border-edge/60 rounded-xl p-5 flex flex-col justify-between space-y-4 hover-lift">
                     <div>
                         <span class="text-[10px] font-bold text-gray-500 tracking-wider uppercase block mb-1">General & Partnerships</span>
-                        <a href="mailto:hello@enzocam1.com" class="text-[14px] font-bold text-white hover:text-brandLightPurple transition-colors break-all">
-                            hello@enzocam1.com
+                        <a href="mailto:hello@morphsync.ai" class="text-[14px] font-bold text-white hover:text-neon transition-colors break-all">
+                            hello@morphsync.ai
                         </a>
                     </div>
                     <p class="text-[13px] text-gray-400 leading-relaxed">
@@ -133,11 +190,11 @@
                     </p>
                 </div>
 
-                <div class="bg-[#090b16]/50 border border-slate-800/50 rounded-xl p-5 flex flex-col justify-between space-y-4">
+                <div class="bg-surface/60 border border-edge/60 rounded-xl p-5 flex flex-col justify-between space-y-4 hover-lift">
                     <div>
                         <span class="text-[10px] font-bold text-gray-500 tracking-wider uppercase block mb-1">Legal & Compliance</span>
-                        <a href="mailto:legal@enzocam1.com" class="text-[14px] font-bold text-white hover:text-brandLightPurple transition-colors break-all">
-                            legal@enzocam1.com
+                        <a href="mailto:legal@morphsync.ai" class="text-[14px] font-bold text-white hover:text-neon transition-colors break-all">
+                            legal@morphsync.ai
                         </a>
                     </div>
                     <p class="text-[13px] text-gray-400 leading-relaxed">
@@ -148,13 +205,15 @@
             </div>
         </section>
 
-        <section class="bg-[#0d1024] border border-slate-800/60 rounded-2xl p-8 lg:p-10 shadow-xl space-y-6">
+        <!-- contact form -->
+        <section class="glass-panel rounded-2xl p-8 lg:p-10 space-y-6 hover-lift">
             <div>
-                <h2 class="text-xl font-bold text-white tracking-tight mb-1">
+                <h2 class="text-xl font-bold text-white tracking-tight mb-1 flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 text-sm">✉️</span>
                     Send us a message
                 </h2>
-                <p class="text-[13px] text-gray-400">
-                    Fill in the form and we'll open your email client with everything pre-filled &mdash; just hit send.
+                <p class="text-[13px] text-gray-400 mt-2">
+                    Fill in the form and we'll open your email client with everything pre-filled — just hit send.
                 </p>
             </div>
 
@@ -169,7 +228,7 @@
                             type="text"
                             id="user-name"
                             placeholder="Optional"
-                            class="w-full px-4 py-3 bg-[#070815] border border-slate-800 rounded-xl text-gray-200 text-[14px] font-medium focus:ring-2 focus:ring-brandPurple focus:border-transparent outline-none transition-all placeholder-gray-600"
+                            class="w-full px-4 py-3 bg-surface border border-edge rounded-xl text-gray-200 text-[14px] font-medium input-focus placeholder-gray-600"
                         >
                     </div>
                     <div class="space-y-2">
@@ -180,7 +239,7 @@
                             type="email"
                             id="user-email"
                             placeholder="you@example.com"
-                            class="w-full px-4 py-3 bg-[#070815] border border-slate-800 rounded-xl text-gray-200 text-[14px] font-medium focus:ring-2 focus:ring-brandPurple focus:border-transparent outline-none transition-all placeholder-gray-600"
+                            class="w-full px-4 py-3 bg-surface border border-edge rounded-xl text-gray-200 text-[14px] font-medium input-focus placeholder-gray-600"
                             required
                         >
                     </div>
@@ -193,12 +252,12 @@
                     <div class="relative">
                         <select
                             id="topic-select"
-                            class="w-full px-4 py-3 bg-[#070815] border border-slate-800 rounded-xl text-gray-200 text-[14px] font-medium focus:ring-2 focus:ring-brandPurple focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                            class="w-full px-4 py-3 bg-surface border border-edge rounded-xl text-gray-200 text-[14px] font-medium input-focus appearance-none cursor-pointer"
                         >
-                            <option value="support@enzocam1.com">Customer support</option>
-                            <option value="billing@enzocam1.com">Billing & Payments</option>
-                            <option value="hello@enzocam1.com">General & Partnerships</option>
-                            <option value="legal@enzocam1.com">Legal & Compliance</option>
+                            <option value="support@morphsync.ai">Customer support</option>
+                            <option value="billing@morphsync.ai">Billing & Payments</option>
+                            <option value="hello@morphsync.ai">General & Partnerships</option>
+                            <option value="legal@morphsync.ai">Legal & Compliance</option>
                         </select>
                         <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -214,18 +273,18 @@
                         id="message-content"
                         rows="5"
                         placeholder="Tell us what you need help with..."
-                        class="w-full px-4 py-3 bg-[#070815] border border-slate-800 rounded-xl text-gray-200 text-[14px] font-medium focus:ring-2 focus:ring-brandPurple focus:border-transparent outline-none transition-all placeholder-gray-600 resize-none"
+                        class="w-full px-4 py-3 bg-surface border border-edge rounded-xl text-gray-200 text-[14px] font-medium input-focus placeholder-gray-600 resize-none"
                         required
                     ></textarea>
                 </div>
 
                 <div class="flex items-center justify-end space-x-3 pt-2">
-                    <a href="/index.html" class="px-5 py-2.5 text-[13px] font-semibold text-gray-400 bg-[#070815] hover:bg-[#0d1024] border border-slate-800 rounded-xl transition-all">
+                    <a href="/index.html" class="px-5 py-2.5 text-[13px] font-semibold text-gray-400 bg-surface hover:bg-edge border border-edge rounded-xl transition-all">
                         Back
                     </a>
                     <button
                         type="submit"
-                        class="text-[13px] font-semibold text-white bg-gradient-to-r from-brandPurple to-brandLightPurple hover:opacity-95 transition-all px-6 py-2.5 rounded-xl button-glow active:scale-[0.98]"
+                        class="text-[13px] font-semibold text-gray-900 bg-neon hover:bg-[#2ce4c2] transition-all px-6 py-2.5 rounded-xl shadow-[0_0_20px_rgba(56,245,212,0.3)] active:scale-[0.98]"
                     >
                         Open in email
                     </button>
@@ -236,23 +295,22 @@
 
     </main>
 
-    <footer class="relative z-10 w-full max-w-6xl mx-auto px-4 pb-8 mt-6">
-        <div class="flex flex-col sm:flex-row items-center justify-between bg-[#05050f] border border-slate-800/40 rounded-xl px-6 py-4 space-y-4 sm:space-y-0">
+    <!-- footer -->
+    <footer class="relative z-10 w-full max-w-6xl mx-auto px-4 pb-8 mt-4">
+        <div class="flex flex-col sm:flex-row items-center justify-between glass-panel rounded-xl px-6 py-4 gap-4">
             <div class="text-md font-bold text-white tracking-tight">
-                FaceVerseAi
+                Morph<span class="text-neon">Sync</span>
             </div>
-
             <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-[12px] font-medium text-gray-400">
-                <a href="/index.html" class="hover:text-white transition-colors">Home</a>
-                <a href="/about.html" class="hover:text-white transition-colors">About</a>
-                <a href="/contact.html" class="hover:text-white transition-colors text-white">Contact</a>
-                <a href="/terms.html" class="hover:text-white transition-colors">Terms</a>
-                <a href="/privacy.html" class="hover:text-white transition-colors">Privacy</a>
-                <a href="/refund.html" class="hover:text-white transition-colors">Refund Policy</a>
+                <a href="/index.html" class="hover:text-neon transition-colors">Home</a>
+                <a href="/about.html" class="hover:text-neon transition-colors">About</a>
+                <a href="/contact.html" class="text-neon font-semibold">Contact</a>
+                <a href="/terms.html" class="hover:text-neon transition-colors">Terms</a>
+                <a href="/privacy.html" class="hover:text-neon transition-colors">Privacy</a>
+                <a href="/refund.html" class="hover:text-neon transition-colors">Refund Policy</a>
             </div>
-
-            <div class="flex items-center space-x-1.5 px-2.5 py-1 bg-[#090b16] border border-slate-800/80 rounded-lg text-[11px] text-gray-400 font-medium">
-                <span>&copy;</span>
+            <div class="flex items-center gap-1.5 px-3 py-1 bg-surface/80 border border-edge/60 rounded-lg text-[11px] text-gray-400 font-medium">
+                <span>©</span>
                 <span class="text-white font-semibold">2026</span>
             </div>
         </div>
@@ -267,7 +325,7 @@
             const destinationInbox = document.getElementById('topic-select').value;
             const message = document.getElementById('message-content').value.trim();
 
-            const subject = encodeURIComponent(`EnzoCam Inquiry from ${name || 'User'}`);
+            const subject = encodeURIComponent(`MorphSync Inquiry from ${name || 'User'}`);
 
             const bodyMessage = `Name: ${name || 'Not Provided'}\nReply-To: ${email}\n\nMessage:\n${message}`;
             const body = encodeURIComponent(bodyMessage);
@@ -275,35 +333,64 @@
             window.location.href = `mailto:${destinationInbox}?subject=${subject}&body=${body}`;
         }
 
-        // Asynchronous structural handshake hook matching landing page specification metrics
-        async function checkSession() {
+        async function checkAuth() {
             try {
-                const response = await fetch('https://faceverse-ai.onrender.com/api/auth/me', {
+                const token = localStorage.getItem('token');
+
+                if (!token) return;
+
+                const response = await fetch('http://localhost:5000/api/auth/me', {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
 
                 if (response.ok) {
-                    const authContainer = document.getElementById('auth-container');
-                    if (authContainer) {
-                        // Dynamically update view links with secure workspace access terminal shortcut
-                        authContainer.innerHTML = `
-                            <a href="/Home.html" class="text-[14px] font-semibold text-white bg-gradient-to-r from-brandPurple to-brandLightPurple hover:opacity-95 transition-all px-5 py-2.5 rounded-xl button-glow">
-                                Dashboard
-                            </a>
-                        `;
-                    }
+                    const userData = await response.json();
+
+                    // Hide login/register buttons
+                    document.getElementById('auth-buttons').classList.add('hidden');
+
+                    // Show user profile section
+                    document.getElementById('user-profile').classList.remove('hidden');
+
+                } else {
+                    console.warn("Stored token rejected by server authentication middleware.");
+                    localStorage.removeItem('token');
                 }
             } catch (error) {
-                // Fail verification operations silently to prioritize interface fluidity for public traffic
-                console.log('Session endpoint handshake skipped:', error);
+                console.error("Auth verification failed:", error);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', checkSession);
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const targetAttr = this.getAttribute('href');
+                    if (targetAttr.startsWith('#')) {
+                        e.preventDefault();
+                        const target = document.querySelector(targetAttr);
+                        if (target) {
+                            const offset = 100;
+                            const bodyRect = document.body.getBoundingClientRect().top;
+                            const targetRect = target.getBoundingClientRect().top;
+                            const targetPosition = targetRect - bodyRect;
+                            const offsetPosition = targetPosition - offset;
+
+                            window.scrollTo({
+                                top: offsetPosition,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
