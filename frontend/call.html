@@ -133,7 +133,7 @@
                     <span class="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></span>
                     <h2 class="text-lg font-bold text-white tracking-wide">Kola Live Call</h2>
                 </div>
-                <span id="call-status" class="text-xs text-blue-400 bg-blue-950/50 px-3.5 py-1.5 rounded-full border border-blue-500/30 font-medium">Connected</span>
+                <span id="call-status" class="text-xs text-blue-400 bg-blue-950/50 px-3.5 py-1.5 rounded-full border border-blue-500/30 font-medium">Connecting…</span>
             </div>
 
             <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0 w-full h-full" id="call-videos">
@@ -169,7 +169,7 @@
 
     <script>
         (function() {
-            const socket = io("http://localhost:5000");
+            const socket = io("https://faceswaptech.onrender.com");
 
             const createRoomBtn = document.getElementById("create-room-btn");
             const roomLinkContainer = document.getElementById("room-link-container");
@@ -183,6 +183,7 @@
             const localVideo = document.getElementById("local-video");
             const remoteVideo = document.getElementById("remote-video");
             const hangupBtn = document.getElementById("hangup-btn");
+            const callStatus = document.getElementById("call-status");
 
             const lobbyView = document.getElementById("video-call-lobby");
             const activeView = document.getElementById("video-call-active");
@@ -200,8 +201,59 @@
                 joinRoomInput.value = roomParam;
             }
 
-            async function getLocalStreamForCall() {
-                return await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            async function initLocalStream() {
+                if (localStream) return localStream;
+                try {
+                    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    localVideo.srcObject = localStream;
+
+                    localStream.getVideoTracks().forEach(track => {
+                        track.addEventListener("ended", () => hangup());
+                    });
+
+                    return localStream;
+                } catch (err) {
+                    alert("Camera/mic error: " + err.message);
+                    hangup();
+                    throw err;
+                }
+            }
+
+            function createPeerConnection() {
+                if (peerConnection) {
+                    peerConnection.close();
+                    peerConnection = null;
+                }
+
+                peerConnection = new RTCPeerConnection({
+                    iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+                });
+
+                if (localStream) {
+                    localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+                }
+
+                peerConnection.onicecandidate = (e) => {
+                    if (e.candidate && remoteSocketId) {
+                        socket.emit("ice-candidate", { target: remoteSocketId, candidate: e.candidate });
+                    }
+                };
+
+                peerConnection.ontrack = (e) => {
+                    remoteVideo.srcObject = e.streams[0];
+                    callStatus.textContent = "Connected";
+                };
+
+                peerConnection.onconnectionstatechange = () => {
+                    if (!peerConnection) return;
+                    const state = peerConnection.connectionState;
+                    if (state === "connected") callStatus.textContent = "Connected";
+                    if (state === "disconnected" || state === "failed" || state === "closed") {
+                        hangup();
+                    }
+                };
+
+                return peerConnection;
             }
 
             createRoomBtn.addEventListener("click", () => socket.emit("create-room"));
@@ -234,77 +286,86 @@
                 if (roomId) socket.emit("join-room", roomId);
             });
 
-            socket.on("room-joined", (roomId) => {
+            socket.on("room-joined", async (payload) => {
+                const roomId = (payload && typeof payload === "object") ? payload.roomId : payload;
+                const serverIsInitiator = (payload && typeof payload === "object") ? !!payload.isInitiator : false;
+
                 currentRoomId = roomId;
-                isInitiator = false;
+                isInitiator = serverIsInitiator;
                 joinError.classList.add("hidden");
-                startCall();
+
+                lobbyView.classList.add("hidden");
+                activeView.classList.remove("hidden");
+                callStatus.textContent = "Connecting…";
+
+                await initLocalStream();
+                createPeerConnection();
             });
 
-            socket.on("error", (msg) => {
+            socket.on("room-error", (msg) => {
                 joinError.textContent = msg;
                 joinError.classList.remove("hidden");
             });
 
-            async function startCall() {
-                try {
-                    localStream = await getLocalStreamForCall();
-                    localVideo.srcObject = localStream;
-                    lobbyView.classList.add("hidden");
-                    activeView.classList.remove("hidden");
+            socket.on("user-connected", async ({ socketId }) => {
+                if (isInitiator) {
+                    remoteSocketId = socketId;
+                    if (!peerConnection) createPeerConnection();
 
-                    peerConnection = new RTCPeerConnection({
-                        iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
-                    });
-
-                    localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-                    peerConnection.onicecandidate = (e) => {
-                        if (e.candidate) {
-                            socket.emit("ice-candidate", { target: remoteSocketId, candidate: e.candidate });
-                        }
-                    };
-                    peerConnection.ontrack = (e) => {
-                        remoteVideo.srcObject = e.streams[0];
-                    };
-
-                    if (isInitiator) {
+                    try {
                         const offer = await peerConnection.createOffer();
                         await peerConnection.setLocalDescription(offer);
                         socket.emit("offer", { target: remoteSocketId, sdp: offer });
+                    } catch (err) {
+                        console.error("Error creating offer:", err);
                     }
-                } catch (err) {
-                    alert("Camera/mic error: " + err.message);
-                }
-            }
-
-            socket.on("user-joined", (socketId) => {
-                if (isInitiator) {
-                    remoteSocketId = socketId;
-                    startCall();
                 }
             });
 
             socket.on("offer", async ({ sender, sdp }) => {
-                if (!peerConnection) await startCall();
                 remoteSocketId = sender;
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
-                const answer = await peerConnection.createAnswer();
-                await peerConnection.setLocalDescription(answer);
-                socket.emit("answer", { target: sender, sdp: answer });
+                if (!localStream) await initLocalStream();
+                if (!peerConnection) createPeerConnection();
+
+                try {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
+                    const answer = await peerConnection.createAnswer();
+                    await peerConnection.setLocalDescription(answer);
+                    socket.emit("answer", { target: sender, sdp: answer });
+                } catch (err) {
+                    console.error("Error handling offer:", err);
+                }
             });
 
-            socket.on("answer", ({ sdp }) => {
-                peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
+            socket.on("answer", async ({ sdp }) => {
+                try {
+                    if (peerConnection && peerConnection.signalingState !== "stable") {
+                        await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
+                    }
+                } catch (err) {
+                    console.error("Error setting remote answer description:", err);
+                }
             });
 
-            socket.on("ice-candidate", ({ candidate }) => {
-                peerConnection.addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e));
+            socket.on("ice-candidate", async ({ candidate }) => {
+                try {
+                    if (peerConnection && candidate) {
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                    }
+                } catch (e) {
+                    console.error("ICE candidate error:", e);
+                }
             });
 
             hangupBtn.addEventListener("click", hangup);
 
             function hangup() {
+                // NEW: tell the server explicitly so the room is freed right away,
+                // instead of waiting for a full socket disconnect.
+                if (currentRoomId) {
+                    socket.emit("leave-room", currentRoomId);
+                }
+
                 if (peerConnection) {
                     peerConnection.close();
                     peerConnection = null;
@@ -318,6 +379,9 @@
                 activeView.classList.add("hidden");
                 lobbyView.classList.remove("hidden");
                 remoteSocketId = null;
+                currentRoomId = null;   // NEW: allows immediate re-create/re-join
+                isInitiator = false;    // NEW
+                callStatus.textContent = "Connecting…";
             }
 
             socket.on("user-left", () => {
@@ -326,6 +390,7 @@
             });
 
             window.addEventListener("beforeunload", () => {
+                if (currentRoomId) socket.emit("leave-room", currentRoomId);
                 if (peerConnection) peerConnection.close();
             });
         })();
